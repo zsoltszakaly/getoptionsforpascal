@@ -118,7 +118,6 @@ const
 
 type
   // Basic types derived from standard pascal types
-  pInteger = ^Integer;
   tChars = array of Char;
   tStrings = array of string;
 
