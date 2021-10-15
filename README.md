@@ -13,3 +13,5 @@ C has a standard library available in most systems, 'getopt'. There is a Pascal 
 - There are two more potential bugs in the implementation: https://forum.lazarus.freepascal.org/index.php/topic,56701.0.html and https://forum.lazarus.freepascal.org/index.php/topic,56702.0.html. The current proposed unit is - hoped to be - free from such bugs.
 
 For all more details, please read the cmdlinedemo.pas header and check how it works. Also, please read the heading and the record specification in the interface section of the getoptions.pas unit.
+
+The getoptions unit uses the quicksort unit available here: https://github.com/zsoltszakaly/quicksortforpascal/blob/main/quicksort.pas
