@@ -74,6 +74,9 @@ unit getoptions;
 //    --sort
 //    --sort=descending
 //
+//  If a long option is not supposed to have an argument, but specified, it is still understood as such. If aReturnAll=true, it
+//  is returned, but OK=false is set. If aReturnAll=false then such an option is not returned and its flag is not used.
+//
 //  The user is allowed to give only a fraction of the long option name, if it can be identified. If there are two long options,
 //  file and filetype, then:
 //    --fil=filename.dat is allowed as it can mean both file and filetype. On the other hand:
@@ -103,7 +106,7 @@ unit getoptions;
 //    soInput : the records are sorted as per the user input
 //    soClassic : First Short and Long options are given back in the input sequence followed by the non-options also in input order
 //  No record is generated for options with ReturnValue = ''
-//  Records with ReturnValue = '' is returned for unknown options
+//  Records with ReturnValue = '' is returned for unknown options if aReturnAll=true
 //
 //  Flags
 //
@@ -111,6 +114,7 @@ unit getoptions;
 //  the value specied in FlagValue.
 //  Flags are set in the order of the occurence of the options, i.e. if the same FlagPointer is assigned to different options then
 //  the value will show the FlagValue of the last used option.
+//  The aReturnAll argument also decides whether to use a Flag for an incorrectly used option.
 //
 //**********************************************************************************************************************************
 
