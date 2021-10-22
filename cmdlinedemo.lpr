@@ -17,6 +17,9 @@ program cmdlinedemo;
 //
 //**********************************************************************************************************************************
 //
+//  Change log:
+//    22/10/2021 Added an example to show the usage of the last (optional) parameter to omit erroneous options
+//
 //  Description
 //
 //  It creates an array of option definitions, and calls multiple times with different parameters the CommandLineOptions function
@@ -25,7 +28,7 @@ program cmdlinedemo;
 //  For all other details, please see the description and the record explanation in the 'getoptions' unit
 //
 //  To run, try something like this (and understand the result):
-//    ./cmdlinedemo -ffilename -s --feedbackswitch=value -? -g nonopt -sf -- -f
+//    ./cmdlinedemo -ffilename -fs -sf --feedbackswitch=value -? -g nonopt -- -f
 //
 //**********************************************************************************************************************************
 
@@ -63,6 +66,11 @@ procedure PrintResults;
 
 begin
 
+Writeln('Command line options in the classic order, i.e. starting with the real options (including unknown and incorrect) '+
+    'followed by the non-option values, both in their input order.');
+CmdLineParameters := CommandLineParameters(OptionDefinitions,soClassic);
+PrintResults;
+
 Writeln('Command line options in the order of their definition (starting with the unknown options). Options and Non-options are '+
     'mixed together.');
 CmdLineParameters := CommandLineParameters(OptionDefinitions,soDefinition);
@@ -76,9 +84,8 @@ Writeln('Command line options in the order of their Input.');
 CmdLineParameters := CommandLineParameters(OptionDefinitions,soInput);
 PrintResults;
 
-Writeln('Command line options in the classic order, i.e. starting with the real options (including unknown and incorrect) '+
-    'followed by the non-option values, both in their input order.');
-CmdLineParameters := CommandLineParameters(OptionDefinitions,soClassic);
+Writeln('Command line options in the order of their Input, not including erroneous options.');
+CmdLineParameters := CommandLineParameters(OptionDefinitions,soInput,false);
 PrintResults;
 
 end.

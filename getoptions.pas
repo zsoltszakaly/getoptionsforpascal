@@ -17,6 +17,12 @@ unit getoptions;
 //
 //**********************************************************************************************************************************
 //
+//  Change log:
+//    22/10/2021 Added a new (optional) parameter to omit erroneous options. The default value is to include all options. Changing
+//               it to false, means to leave out all unexpected and incorrectly specified options
+//    22/10/2021 In case of sorting by ReturnValue or by DefinitionOrder, a secondary sorting is added to sort by input order if the
+//               main sorting criterium is the same for two (or more) options
+//
 //  Description
 //
 //  USER SIDE
@@ -199,8 +205,8 @@ type
   tOptionResults = array of tOptionResult;
 
 // The main function
-function CommandLineParameters(const aOptions : tOptionDefinitions; aSorting : tSortingOptions = soClassic) :
-    tOptionResults;
+function CommandLineParameters(const aOptions : tOptionDefinitions; aSorting : tSortingOptions = soClassic;
+    aReturnAll : boolean = true) : tOptionResults;
 
 implementation
 
@@ -218,22 +224,38 @@ function CompareDefinitionIndex(const a1, a2) : integer;
     r1 : tOptionResult absolute a1;
     r2 : tOptionResult absolute a2;
   begin
-  if r1.DefinitionIndex = r2.DefinitionIndex then result := 0 else
-  if r1.DefinitionIndex < r2.DefinitionIndex then result := -1 else
-  result := 1;
+  if r1.DefinitionIndex = r2.DefinitionIndex then
+    begin
+    if r1.InputIndex = r2.InputIndex then result := 0
+    else if r1.InputIndex < r2.InputIndex then result := -1
+    else result := 1;
+    end
+  else
+    begin
+    if r1.DefinitionIndex < r2.DefinitionIndex then result := -1
+    else result := 1;
+    end;
   end;
 function CompareReturnValue(const a1, a2) : integer;
   var
     r1 : tOptionResult absolute a1;
     r2 : tOptionResult absolute a2;
   begin
-  if r1.ReturnValue = r2.ReturnValue then result := 0 else
-  if r1.ReturnValue < r2.ReturnValue then result := -1 else
-  result := 1;
+  if r1.ReturnValue = r2.ReturnValue then
+    begin
+    if r1.InputIndex = r2.InputIndex then result := 0
+    else if r1.InputIndex < r2.InputIndex then result := -1
+    else result := 1;
+    end
+  else
+    begin
+    if r1.ReturnValue < r2.ReturnValue then result := -1
+    else result := 1;
+    end;
   end;
 // The main function, split into sub-function for better readibility
-function CommandLineParameters(const aOptions : tOptionDefinitions; aSorting : tSortingOptions = soClassic) :
-    tOptionResults;
+function CommandLineParameters(const aOptions : tOptionDefinitions; aSorting : tSortingOptions = soClassic;
+    aReturnAll : boolean = true) : tOptionResults;
   var
     NonOptions : tOptionResults = nil;
       // A temporary array to store non-options for soClassic
@@ -247,6 +269,9 @@ function CommandLineParameters(const aOptions : tOptionDefinitions; aSorting : t
   procedure AddResult(aReal : boolean; aReturnValue : string; aDefinitionIndex : integer; aOK : boolean;
       aOption : string; aArgument : string);
     begin
+    // Decide if Result is to be reported, or not
+    if (not aOK) and (not aReturnAll) then
+      exit;
     // Set the flag if applicable
     if (aDefinitionIndex <> -1) and
        (aOptions[aDefinitionIndex].FlagPointer <> nil) then
